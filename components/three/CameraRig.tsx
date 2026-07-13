@@ -54,6 +54,29 @@ export function CameraRig() {
     posCurve.getPoint(u, v.pos);
     tgtCurve.getPoint(u, v.tgt);
 
+    // portrait screens: preserve the authored horizontal framing by widening
+    // the lens (capped) and dollying back while we're outside the building
+    const cam = state.camera as THREE.PerspectiveCamera;
+    const AUTHORED_ASPECT = 1.25;
+    const BASE_FOV = 42;
+    let fov = BASE_FOV;
+    let dolly = 1;
+    if (cam.aspect < AUTHORED_ASPECT) {
+      const halfW = Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2)) * AUTHORED_ASPECT;
+      const ideal = 2 * Math.atan(halfW / cam.aspect);
+      fov = Math.min(70, THREE.MathUtils.radToDeg(ideal));
+      dolly = (halfW / cam.aspect) / Math.tan(THREE.MathUtils.degToRad(fov / 2));
+    }
+    if (Math.abs(cam.fov - fov) > 0.01) {
+      cam.fov = fov;
+      cam.updateProjectionMatrix();
+    }
+    if (dolly > 1) {
+      const outside = 1 - seg(p, 0.72, 0.84);
+      const s = 1 + (dolly - 1) * outside;
+      v.pos.sub(v.tgt).multiplyScalar(s).add(v.tgt);
+    }
+
     // gentle breathing + pointer parallax, both retire as we move indoors
     const calm = 1 - seg(p, 0.6, 0.8);
     const t = state.clock.elapsedTime;

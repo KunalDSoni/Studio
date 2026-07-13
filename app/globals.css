@@ -121,11 +121,31 @@ button {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
+  white-space: nowrap;
   color: var(--paper);
   background: var(--ink);
   padding: 14px 26px;
   border-radius: 999px;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .nav {
+    padding: 16px 18px;
+  }
+  .nav__logo {
+    font-size: 22px;
+  }
+  .nav__right {
+    gap: 14px;
+  }
+  .nav__link {
+    font-size: 13px;
+  }
+  .nav__cta {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
 }
 
 .nav__cta:hover {
@@ -169,6 +189,17 @@ button {
 
 .hud__title em {
   font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .hud__kicker {
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    margin-bottom: 18px;
+  }
+  .hud__title {
+    font-size: clamp(30px, 9.4vw, 38px);
+  }
 }
 
 .hud__hint {

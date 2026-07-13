@@ -6,7 +6,10 @@ import { useFrame } from "@react-three/fiber";
 import { store } from "@/lib/store";
 import { sampleTargets } from "@/lib/house";
 
-const COUNT = 22000;
+const COUNT =
+  typeof window !== "undefined" && window.innerWidth < 768 ? 9000 : 22000;
+const SIZE_SCALE =
+  typeof window !== "undefined" && window.innerWidth < 768 ? 0.8 : 1;
 
 // All particle motion is stateless and lives in the vertex shader:
 // one draw call, zero per-frame CPU work on positions.
@@ -17,6 +20,7 @@ uniform vec3  uMouse;
 uniform float uIdle;
 uniform float uPointer;
 uniform float uPixelRatio;
+uniform float uSizeScale;
 uniform vec3  uTrail[16];
 uniform float uTrailCount;
 uniform vec4  uAnchors[6];
@@ -80,7 +84,7 @@ void main() {
 
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = (1.1 + aRand.z * 2.1) * uPixelRatio * (17.0 / max(-mv.z, 0.5));
+  gl_PointSize = (1.1 + aRand.z * 2.1) * uPixelRatio * uSizeScale * (17.0 / max(-mv.z, 0.5));
 
   // the canvas starts truly blank — particles only exist once scrolling begins
   float appear = smoothstep(0.004, 0.05, uProgress + stag * 0.012);
@@ -138,6 +142,7 @@ export function Particles() {
       uIdle: { value: 0 },
       uPointer: { value: 0 },
       uPixelRatio: { value: 1 },
+      uSizeScale: { value: SIZE_SCALE },
       uTrail: { value: Array.from({ length: 16 }, () => new THREE.Vector3(0, -50, 0)) },
       uTrailCount: { value: 0 },
       uAnchors: { value: Array.from({ length: 6 }, () => new THREE.Vector4(0, 0, 0, -100)) },
