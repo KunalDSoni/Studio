@@ -595,7 +595,6 @@ export function Interior() {
   useFrame(() => {
     const p = store.progress;
     const furnP = easeInOut(seg(p, 0.55, 0.72));
-    const lightP = seg(p, 0.64, 0.76);
 
     for (const { node, order } of items.current) {
       const local = easeOutCubic(seg(furnP, order * 0.55, order * 0.55 + 0.45));
@@ -604,10 +603,11 @@ export function Interior() {
     }
 
     const f = fx.current;
-    if (f.lampShade) f.lampShade.emissiveIntensity = lightP * 1.5;
-    if (f.pendantGlass) f.pendantGlass.emissiveIntensity = lightP * 1.9;
-    if (f.cove) f.cove.emissiveIntensity = lightP * 2.6;
-    if (f.sheer) f.sheer.opacity = 0.36 * seg(furnP, 0.82, 1);
+    const L = store.lightLevel;
+    if (f.lampShade) f.lampShade.emissiveIntensity = 1.5 * L;
+    if (f.pendantGlass) f.pendantGlass.emissiveIntensity = 1.9 * L;
+    if (f.cove) f.cove.emissiveIntensity = 2.6 * L;
+    if (f.sheer) f.sheer.opacity = store.sheerLevel;
   });
 
   return <primitive object={groupRef.current} />;

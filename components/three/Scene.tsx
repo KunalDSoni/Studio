@@ -3,7 +3,8 @@
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
-import { store, seg } from "@/lib/store";
+import { store, seg, easeInOut } from "@/lib/store";
+import { envAt, createEnvState, SUN_RADIUS } from "@/lib/environment";
 import { Particles } from "./Particles";
 import { Blueprint } from "./Blueprint";
 import { Building } from "./Building";
@@ -22,10 +23,11 @@ const PAPER = new THREE.Color("#f1ece1");
 export function Scene() {
   const scene = useThree((s) => s.scene);
 
+  const bgColor = useMemo(() => new THREE.Color(PAPER), []);
   useMemo(() => {
-    scene.background = PAPER;
+    scene.background = bgColor;
     scene.fog = new THREE.Fog(PAPER, 26, 70);
-  }, [scene]);
+  }, [scene, bgColor]);
 
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const plane = useMemo(() => new THREE.Plane(), []);
@@ -39,6 +41,22 @@ export function Scene() {
     []
   );
   const lastTrail = useRef(0);
+
+  const env = useMemo(() => createEnvState(), []);
+  const blend = useMemo(
+    () => ({
+      sunColor: new THREE.Color(),
+      hemiSky: new THREE.Color(),
+      hemiGround: new THREE.Color(),
+      bg: new THREE.Color(),
+      storySun: new THREE.Color("#ffd3a0"),
+      storyHemiSky: new THREE.Color("#fff6e6"),
+      storyHemiGround: new THREE.Color("#d8c9b2"),
+      storyBg: new THREE.Color(PAPER),
+      sunPos: new THREE.Vector3(),
+    }),
+    []
+  );
 
   const sun = useRef<THREE.DirectionalLight>(null);
   const hemi = useRef<THREE.HemisphereLight>(null);
@@ -102,19 +120,59 @@ export function Scene() {
       }
     }
 
-    // -- lighting choreography ------------------------------------------------
+    // -- lighting: story authority blended with the time-of-day engine -------
+    store.time += (store.timeTarget - store.time) * Math.min(1, dt * 3.2);
+    const w = seg(p, 0.93, 0.985); // 0 = scroll story owns light, 1 = slider owns it
+    envAt(store.time, env);
+
     const lightP = seg(p, 0.64, 0.76);
     const interiorP = seg(p, 0.74, 0.9);
+    const furnP = easeInOut(seg(p, 0.55, 0.72));
+
+    // published scalars — Interior and Effects read these
+    store.lightLevel = lightP * (1 - w) + env.practicals * w;
+    store.sheerLevel =
+      0.36 * seg(furnP, 0.82, 1) * (1 - w) + env.sheerOpacity * w;
+    store.bloomLevel =
+      seg(p, 0.64, 0.78) * 0.38 * (1 - w) + env.bloom * w;
+
     if (sun.current) {
-      // golden hour: the sun warms and strengthens as the lights come on
-      sun.current.intensity = 0.6 + lightP * 1.9;
+      sun.current.intensity =
+        (0.6 + lightP * 1.9) * (1 - w) + env.sunIntensity * w;
+      blend.sunColor
+        .setRGB(env.sunColor[0], env.sunColor[1], env.sunColor[2])
+        .lerpColors(blend.storySun, blend.sunColor, w);
+      sun.current.color.copy(blend.sunColor);
+      const az = (env.sunAzimuth * Math.PI) / 180;
+      const el = (env.sunElevation * Math.PI) / 180;
+      blend.sunPos.set(
+        SUN_RADIUS * Math.cos(el) * Math.sin(az),
+        SUN_RADIUS * Math.sin(el),
+        SUN_RADIUS * Math.cos(el) * Math.cos(az)
+      );
+      sun.current.position.set(7, 5.5, 15).lerp(blend.sunPos, w);
     }
     if (hemi.current) {
-      hemi.current.intensity = 1.05 - interiorP * 0.3;
+      hemi.current.intensity =
+        (1.05 - interiorP * 0.3) * (1 - w) + env.hemiIntensity * w;
+      blend.hemiSky
+        .setRGB(env.hemiSky[0], env.hemiSky[1], env.hemiSky[2])
+        .lerpColors(blend.storyHemiSky, blend.hemiSky, w);
+      hemi.current.color.copy(blend.hemiSky);
+      blend.hemiGround
+        .setRGB(env.hemiGround[0], env.hemiGround[1], env.hemiGround[2])
+        .lerpColors(blend.storyHemiGround, blend.hemiGround, w);
+      hemi.current.groundColor.copy(blend.hemiGround);
     }
-    if (lamp.current) lamp.current.intensity = lightP * 3.4;
-    if (ceiling.current) ceiling.current.intensity = lightP * 4.2;
-    if (pendant.current) pendant.current.intensity = lightP * 1.6;
+    if (lamp.current) lamp.current.intensity = 3.4 * store.lightLevel;
+    if (ceiling.current) ceiling.current.intensity = 4.2 * store.lightLevel;
+    if (pendant.current) pendant.current.intensity = 1.6 * store.lightLevel;
+
+    blend.bg
+      .setRGB(env.bg[0], env.bg[1], env.bg[2])
+      .lerpColors(blend.storyBg, blend.bg, w);
+    bgColor.copy(blend.bg);
+    if (scene.fog) (scene.fog as THREE.Fog).color.copy(blend.bg);
   }, -2);
 
   return (

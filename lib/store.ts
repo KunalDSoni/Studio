@@ -36,6 +36,17 @@ export const store = {
   anchors: [] as Anchor[],
   /** set by pointerdown, consumed inside the canvas frame loop */
   pendingClick: false,
+
+  /** time of day, 0 Morning .. 1 Evening; smoothed by the Scene loop */
+  time: 0.75,
+  /** raw slider value the Scene loop eases `time` toward */
+  timeTarget: 0.75,
+  /** blended master level for interior practicals (Scene writes, others read) */
+  lightLevel: 0,
+  /** blended sheer-curtain opacity (Scene writes, Interior reads) */
+  sheerLevel: 0,
+  /** blended bloom intensity (Scene writes, Effects reads) */
+  bloomLevel: 0,
 };
 
 /** 0..1 ramp of the global progress between two marks */
