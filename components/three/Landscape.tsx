@@ -201,7 +201,7 @@ export function Landscape() {
         return c;
       };
       g.add(chair(-0.75, 0.5), chair(0.75, -0.5));
-      // (-3.1, 5.7): clears the hedge at (-2.4, 4.5) and the tree at (-3.6, 6.8)
+      // (-3.1, 5.7): clears the hedge at (-2.9, 4.5) and the tree at (-3.6, 6.8)
       add(g, 0.62, -3.1, 5.7, 0.2);
     }
 
