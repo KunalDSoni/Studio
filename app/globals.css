@@ -276,13 +276,16 @@ button {
   font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  /* legible over both bright daylight and the dark blue-hour stage */
+  color: #d9d5c9;
+  text-shadow: 0 1px 3px rgba(22, 16, 9, 0.6);
 }
 
 .timeslider__track {
   position: relative;
   height: 2px;
-  background: var(--ink-faint);
+  /* mid tone reads on both bright paper and dusk indigo */
+  background: rgba(150, 144, 130, 0.5);
   border-radius: 1px;
   /* generous one-thumb hit area */
   padding: 22px 0;
@@ -295,7 +298,8 @@ button {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--ink-soft);
+  background: rgba(224, 220, 208, 0.92);
+  box-shadow: 0 0 0 1px rgba(48, 36, 24, 0.28);
   transform: translate(-50%, -50%);
 }
 

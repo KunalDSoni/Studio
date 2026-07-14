@@ -38,23 +38,24 @@ const hex = (h: number): Rgb => [
 // it must equal the scroll story's final lighting so the handoff is invisible.
 // (#ffd3a0 sun at the bearing of [7, 5.5, 15]: azimuth 25°, elevation 18.4°.)
 const KEYS: EnvState[] = [
-  { // Morning — low eastern sun, cool pale gold, long shadows
-    sunAzimuth: 85, sunElevation: 13,
-    sunColor: hex(0xffe9c4), sunIntensity: 1.7,
-    hemiSky: hex(0xf2f6f0), hemiGround: hex(0xcfc4ae), hemiIntensity: 1.0,
-    bg: hex(0xedefe6), practicals: 0, sheerOpacity: 0.3, bloom: 0.06,
+  { // Morning — low sun raking from the front-left (shadows flip vs golden),
+    // cool pale light through the south glazing, practicals off.
+    sunAzimuth: -35, sunElevation: 15,
+    sunColor: hex(0xeef2f2), sunIntensity: 2.7,
+    hemiSky: hex(0xe3edf6), hemiGround: hex(0xcec8b9), hemiIntensity: 1.5,
+    bg: hex(0xe9eff0), practicals: 0, sheerOpacity: 0.28, bloom: 0.06,
   },
-  { // Late Morning — climbing whiter sun, crisper shadows
-    sunAzimuth: 60, sunElevation: 38,
-    sunColor: hex(0xfff4dd), sunIntensity: 2.1,
-    hemiSky: hex(0xf4f7f3), hemiGround: hex(0xd6cab2), hemiIntensity: 1.1,
-    bg: hex(0xf2f1e8), practicals: 0, sheerOpacity: 0.3, bloom: 0.04,
+  { // Late Morning — sun climbing, whiter and brighter, crisper shadows
+    sunAzimuth: -12, sunElevation: 30,
+    sunColor: hex(0xfff6e6), sunIntensity: 3.0,
+    hemiSky: hex(0xeff4f2), hemiGround: hex(0xd8cfba), hemiIntensity: 1.5,
+    bg: hex(0xf2f3ec), practicals: 0, sheerOpacity: 0.3, bloom: 0.06,
   },
-  { // Afternoon — high neutral-warm sun, shortest shadows
-    sunAzimuth: 40, sunElevation: 55,
-    sunColor: hex(0xfff9ea), sunIntensity: 2.3,
-    hemiSky: hex(0xf7f5ec), hemiGround: hex(0xdccfb6), hemiIntensity: 1.15,
-    bg: hex(0xf4efe2), practicals: 0, sheerOpacity: 0.32, bloom: 0.05,
+  { // Afternoon — high neutral-warm sun, brightest, shortest shadows
+    sunAzimuth: 10, sunElevation: 42,
+    sunColor: hex(0xfffaf0), sunIntensity: 3.15,
+    hemiSky: hex(0xf6f5ec), hemiGround: hex(0xddd2ba), hemiIntensity: 1.45,
+    bg: hex(0xf5f2e8), practicals: 0, sheerOpacity: 0.33, bloom: 0.08,
   },
   { // Golden Hour — FIXED: equals the story-end state
     sunAzimuth: 25, sunElevation: 18.4,
@@ -62,11 +63,12 @@ const KEYS: EnvState[] = [
     hemiSky: hex(0xfff6e6), hemiGround: hex(0xd8c9b2), hemiIntensity: 0.75,
     bg: hex(0xf1ece1), practicals: 1, sheerOpacity: 0.36, bloom: 0.38,
   },
-  { // Evening — blue hour: sun gone, slate fill keeps shadow shape
-    sunAzimuth: 10, sunElevation: 6,
-    sunColor: hex(0x7d8bb0), sunIntensity: 0.22,
-    hemiSky: hex(0x46506b), hemiGround: hex(0x3a3630), hemiIntensity: 0.5,
-    bg: hex(0x2e3547), practicals: 1.3, sheerOpacity: 0.5, bloom: 0.55,
+  { // Evening — blue hour: sun gone, cool indigo fill so unlit surfaces read
+    // blue while the warm practicals make the interior glow against it.
+    sunAzimuth: 12, sunElevation: 5,
+    sunColor: hex(0x8290b8), sunIntensity: 0.25,
+    hemiSky: hex(0x45579c), hemiGround: hex(0x2c3858), hemiIntensity: 1.05,
+    bg: hex(0x232d4a), practicals: 0.95, sheerOpacity: 0.5, bloom: 0.5,
   },
 ];
 
