@@ -38,24 +38,27 @@ const hex = (h: number): Rgb => [
 // it must equal the scroll story's final lighting so the handoff is invisible.
 // (#ffd3a0 sun at the bearing of [7, 5.5, 15]: azimuth 25°, elevation 18.4°.)
 const KEYS: EnvState[] = [
-  { // Morning — low sun raking from the front-left (shadows flip vs golden),
-    // cool pale light through the south glazing, practicals off.
-    sunAzimuth: -35, sunElevation: 15,
-    sunColor: hex(0xeef2f2), sunIntensity: 2.7,
-    hemiSky: hex(0xe3edf6), hemiGround: hex(0xcec8b9), hemiIntensity: 1.5,
-    bg: hex(0xe9eff0), practicals: 0, sheerOpacity: 0.28, bloom: 0.06,
+  { // Morning — low sun in the proven south-glazing corridor (long raking
+    // shaft), COOL blue daylight in and cool hemisphere fill so the whole
+    // frame reads distinctly cooler than the warm afternoon; practicals off.
+    sunAzimuth: 16, sunElevation: 10,
+    sunColor: hex(0xc4d8f2), sunIntensity: 2.6,
+    hemiSky: hex(0xc6daf6), hemiGround: hex(0x9fa9bb), hemiIntensity: 1.4,
+    bg: hex(0xd2ddee), practicals: 0, sheerOpacity: 0.28, bloom: 0.05,
   },
-  { // Late Morning — sun climbing, whiter and brighter, crisper shadows
-    sunAzimuth: -12, sunElevation: 30,
-    sunColor: hex(0xfff6e6), sunIntensity: 3.0,
-    hemiSky: hex(0xeff4f2), hemiGround: hex(0xd8cfba), hemiIntensity: 1.5,
-    bg: hex(0xf2f3ec), practicals: 0, sheerOpacity: 0.3, bloom: 0.06,
+  { // Late Morning — sun climbing, whiter/brighter, neutral-cool fill,
+    // shorter shaft than morning; a clear step brighter than morning.
+    sunAzimuth: 20, sunElevation: 26,
+    sunColor: hex(0xf2f4f4), sunIntensity: 3.1,
+    hemiSky: hex(0xeaf0f2), hemiGround: hex(0xcbccc6), hemiIntensity: 1.55,
+    bg: hex(0xebecea), practicals: 0, sheerOpacity: 0.3, bloom: 0.06,
   },
-  { // Afternoon — high neutral-warm sun, brightest, shortest shadows
-    sunAzimuth: 10, sunElevation: 42,
-    sunColor: hex(0xfffaf0), sunIntensity: 3.15,
-    hemiSky: hex(0xf6f5ec), hemiGround: hex(0xddd2ba), hemiIntensity: 1.45,
-    bg: hex(0xf5f2e8), practicals: 0, sheerOpacity: 0.33, bloom: 0.08,
+  { // Afternoon — high warm-neutral sun, BRIGHTEST frame of the day (beats
+    // golden), shortest/steepest shaft; warm but not as saturated as golden.
+    sunAzimuth: 28, sunElevation: 40,
+    sunColor: hex(0xfff3dc), sunIntensity: 3.6,
+    hemiSky: hex(0xf8f3ea), hemiGround: hex(0xe0d8c6), hemiIntensity: 1.85,
+    bg: hex(0xf7f3ea), practicals: 0, sheerOpacity: 0.33, bloom: 0.09,
   },
   { // Golden Hour — FIXED: equals the story-end state
     sunAzimuth: 25, sunElevation: 18.4,
