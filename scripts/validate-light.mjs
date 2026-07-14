@@ -10,15 +10,16 @@ async function run(width, height, tag) {
   await page.goto("http://localhost:3000", { waitUntil: "networkidle" });
   await page.waitForTimeout(3000);
 
-  // handoff pair: story authority vs slider authority, untouched slider
-  for (const p of [0.92, 0.99]) {
+  // approach captures (p60/p75) + handoff pair (p92/p99): story authority vs
+  // slider authority on an untouched slider. p92/p99 must stay indistinguishable.
+  for (const p of [0.6, 0.75, 0.92, 0.99]) {
     await page.evaluate((prog) => {
       const track = document.querySelector("#experience-track");
       const top = track.getBoundingClientRect().top + window.scrollY;
       window.scrollTo(0, top + (track.offsetHeight - window.innerHeight) * prog);
     }, p);
     await page.waitForTimeout(7000);
-    await page.screenshot({ path: `scripts/out/${tag}-handoff-p${p * 100}.png` });
+    await page.screenshot({ path: `scripts/out/${tag}-scroll-p${p * 100}.png` });
   }
 
   // five stages via real thumb drags
