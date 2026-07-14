@@ -39,7 +39,6 @@ export function Hud() {
   return (
     <div className="hud" aria-hidden>
       <div className="hud__intro" ref={introRef}>
-        <p className="hud__kicker">Studio — interior architecture</p>
         <h1 className="hud__title">
           Every masterpiece begins
           <br />
