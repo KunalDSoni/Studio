@@ -12,7 +12,7 @@ async function run(width, height, tag) {
 
   // approach captures (p60/p75) + handoff pair (p92/p99): story authority vs
   // slider authority on an untouched slider. p92/p99 must stay indistinguishable.
-  for (const p of [0.6, 0.75, 0.92, 0.99]) {
+  for (const p of [0.68, 0.75, 0.92, 0.99]) {
     await page.evaluate((prog) => {
       const track = document.querySelector("#experience-track");
       const top = track.getBoundingClientRect().top + window.scrollY;

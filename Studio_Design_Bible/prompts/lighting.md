@@ -1,0 +1,3 @@
+# lighting.md
+
+Prompt placeholder.

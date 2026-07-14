@@ -1,0 +1,3 @@
+# animation.md
+
+Prompt placeholder.

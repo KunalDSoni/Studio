@@ -57,7 +57,7 @@ export function Landscape() {
       color: "#cfd8dd", roughness: 0.08, metalness: 0.35,
     });
     const bollardGlow = new THREE.MeshStandardMaterial({
-      color: "#efe3c8", emissive: "#ffd9a4", emissiveIntensity: 0,
+      color: "#efe3c8", emissive: "#ffb066", emissiveIntensity: 0,
     });
     const emberMat = new THREE.MeshStandardMaterial({
       color: "#2c221a", emissive: "#ff8a3d", emissiveIntensity: 0, roughness: 1,
@@ -100,7 +100,7 @@ export function Landscape() {
         s.rotation.y = (i % 2 ? -1 : 1) * 0.06;
         g.add(s);
       }
-      g.add(M(RB(3.2, 0.55, 0.6, 0.2), foliageB, -2.4, 0.27, 4.5));
+      g.add(M(RB(3.2, 0.55, 0.6, 0.2), foliageB, -2.9, 0.27, 4.5));
       g.add(M(RB(2.0, 0.45, 0.55, 0.18), foliageA, 2.7, 0.22, 4.7));
       add(g, 0.52);
     }
@@ -177,8 +177,8 @@ export function Landscape() {
       const g = new THREE.Group();
       // basin rim
       g.add(M(RB(1.7, 0.09, 6.1, 0.03), charStone, 3.0, 0.045, 8.6));
-      // water surface, recessed 5mm inside the rim
-      const surf = M(new THREE.PlaneGeometry(1.5, 5.9), water, 3.0, 0.085, 8.6, false);
+      // water surface, brimming proud of the rim so it reads from every angle
+      const surf = M(new THREE.PlaneGeometry(1.5, 5.9), water, 3.0, 0.095, 8.6, false);
       surf.rotation.x = -Math.PI / 2;
       g.add(surf);
       add(g, 0.58);
@@ -238,11 +238,16 @@ export function Landscape() {
       for (let i = 0; i < 46; i++) {
         const t = i / 46;
         const side = i % 2 ? 1 : -1;
-        pos.set(
-          side * (1.7 + ((i * 37) % 23) / 10),
-          0.21,
-          4.6 + t * 7.4 + ((i * 13) % 7) / 10
-        );
+        let x = side * (1.7 + ((i * 37) % 23) / 10);
+        const z = 4.6 + t * 7.4 + ((i * 13) % 7) / 10;
+        // deterministic reject-and-nudge: keep tufts out of hardscape footprints
+        const inPool = x > 2.05 && x < 3.95 && z > 5.45 && z < 11.75;
+        const inFirePit = (x + 3.1) * (x + 3.1) + (z - 5.7) * (z - 5.7) < 0.75 * 0.75;
+        const inTerrace = x > -1.3 && x < 3.4 && z > 3.5 && z < 5.2;
+        if (inPool || inFirePit || inTerrace) {
+          x = side > 0 ? 4.1 + (i % 5) / 10 : -(4.0 + (i % 5) / 10);
+        }
+        pos.set(x, 0.21, z);
         rot.setFromAxisAngle(new THREE.Vector3(0, 1, 0), (i * 2.4) % Math.PI);
         const s = 0.7 + ((i * 29) % 11) / 18;
         scl.set(s, s, s);
@@ -301,7 +306,7 @@ export function Landscape() {
     }
 
     const L = store.gardenLevel;
-    if (f.bollard) f.bollard.emissiveIntensity = 2.2 * L;
+    if (f.bollard) f.bollard.emissiveIntensity = 1.5 * L;
     if (f.ember) f.ember.emissiveIntensity = 3.0 * L;
     if (f.spill) f.spill.emissiveIntensity = 0.5 * L;
     if (f.emberLight) f.emberLight.intensity = 2.6 * L;

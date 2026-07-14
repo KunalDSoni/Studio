@@ -61,15 +61,12 @@ export function Interior() {
     const charcoal = new THREE.MeshStandardMaterial({ color: "#35302a", roughness: 0.9 });
     const smoked = new THREE.MeshStandardMaterial({ color: "#151210", metalness: 0.4, roughness: 0.14 });
     const soil = new THREE.MeshStandardMaterial({ color: "#3d3128", roughness: 1 });
-    const foliageA = new THREE.MeshStandardMaterial({ color: "#8b8c6c", roughness: 1 });
-    const foliageB = new THREE.MeshStandardMaterial({ color: "#767a5b", roughness: 1 });
     const leafGreen = new THREE.MeshStandardMaterial({ color: "#3e6b3c", roughness: 1 });
     const blossomMagenta = new THREE.MeshStandardMaterial({ color: "#c9407e", roughness: 0.85 });
     const blossomPink = new THREE.MeshStandardMaterial({ color: "#e0699b", roughness: 0.85 });
     const blossomCoral = new THREE.MeshStandardMaterial({ color: "#e08157", roughness: 0.85 });
     const glazedPot = new THREE.MeshStandardMaterial({ color: "#4e6b60", roughness: 0.3 });
     const bark = new THREE.MeshStandardMaterial({ color: "#6e5d4a", roughness: 1 });
-    const stone = new THREE.MeshStandardMaterial({ color: "#c6bda9", roughness: 0.95 });
     const shadeMat = new THREE.MeshStandardMaterial({
       color: "#ead9b8", roughness: 1, side: THREE.DoubleSide,
       emissive: "#ffd9a4", emissiveIntensity: 0,
