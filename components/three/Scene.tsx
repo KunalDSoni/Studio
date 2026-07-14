@@ -9,6 +9,7 @@ import { Particles } from "./Particles";
 import { Blueprint } from "./Blueprint";
 import { Building } from "./Building";
 import { Interior } from "./Interior";
+import { Landscape } from "./Landscape";
 import { CameraRig } from "./CameraRig";
 import { Anchors } from "./Anchors";
 import { Effects } from "./Effects";
@@ -135,6 +136,7 @@ export function Scene() {
       0.36 * seg(furnP, 0.82, 1) * (1 - w) + env.sheerOpacity * w;
     store.bloomLevel =
       seg(p, 0.64, 0.78) * 0.38 * (1 - w) + env.bloom * w;
+    store.gardenLevel = lightP * (1 - w) + env.garden * w;
 
     if (sun.current) {
       sun.current.intensity =
@@ -226,6 +228,7 @@ export function Scene() {
       <Blueprint />
       <Building />
       <Interior />
+      <Landscape />
       <Anchors />
       <Effects />
     </>

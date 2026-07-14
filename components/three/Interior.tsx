@@ -554,41 +554,6 @@ export function Interior() {
       add(g, 0.8);
     }
 
-    // ---- the garden beyond the glass ----------------------------------------
-    {
-      const g = new THREE.Group();
-      for (let i = 0; i < 6; i++) {
-        const s = M(RB(0.56, 0.05, 0.42, 0.02), stone, 0.55 + (i % 2) * 0.14, 0.025, 4.15 + i * 0.68);
-        s.rotation.y = (i % 2 ? -1 : 1) * 0.06;
-        g.add(s);
-      }
-      g.add(M(RB(3.2, 0.55, 0.6, 0.2), foliageB, -2.4, 0.27, 4.5));
-      g.add(M(RB(2.0, 0.45, 0.55, 0.18), foliageA, 2.7, 0.22, 4.7));
-      add(g, 0.52);
-    }
-    {
-      const mkTree = (scale: number) => {
-        const g = new THREE.Group();
-        const trunk = M(new THREE.CylinderGeometry(0.06 * scale, 0.09 * scale, 1.7 * scale, 10), bark, 0, 0.85 * scale, 0);
-        trunk.rotation.z = 0.05;
-        g.add(trunk);
-        const blobs: Array<[number, number, number, number]> = [
-          [0, 2.1, 0, 0.75], [0.55, 1.8, 0.1, 0.5], [-0.5, 1.9, -0.1, 0.55], [0.1, 2.5, -0.1, 0.5],
-        ];
-        blobs.forEach(([bx, by, bz, r], i) => {
-          const s = new THREE.Mesh(new THREE.SphereGeometry(r * scale, 18, 12), i % 2 ? foliageA : foliageB);
-          s.scale.y = 0.72;
-          s.position.set(bx * scale, by * scale, bz * scale);
-          s.castShadow = true;
-          g.add(s);
-        });
-        return g;
-      };
-      add(mkTree(1.15), 0.6, -3.6, 6.8, 0.4);
-      add(mkTree(0.85), 0.7, 3.2, 8.4, 1.2);
-      add(mkTree(1.0), 0.76, -1.0, 9.6, 2.1);
-    }
-
     groupRef.current = root;
   }
 

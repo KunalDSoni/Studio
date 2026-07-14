@@ -47,6 +47,8 @@ export const store = {
   sheerLevel: 0,
   /** blended bloom intensity (Scene writes, Effects reads) */
   bloomLevel: 0,
+  /** blended master level for landscape lighting (Scene writes, Landscape reads) */
+  gardenLevel: 0,
 };
 
 /** 0..1 ramp of the global progress between two marks */
