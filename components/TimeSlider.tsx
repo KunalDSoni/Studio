@@ -5,7 +5,7 @@ import { store, seg } from "@/lib/store";
 import { STAGE_NAMES } from "@/lib/environment";
 
 // Thumb tints per stage (morning cool-gold → evening indigo)
-const THUMB_COLORS = ["#f4d9a6", "#f7ecd2", "#f9f3e2", "#f2b268", "#4a5474"];
+const THUMB_COLORS = ["#cfdcec", "#e8ecdf", "#f9f3e2", "#f2b268", "#4a5474"];
 
 export function TimeSlider() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -69,6 +69,8 @@ export function TimeSlider() {
         if (dragging.current) setFromClientX(e.clientX);
       }}
       onPointerUp={() => (dragging.current = false)}
+      onPointerCancel={() => (dragging.current = false)}
+      onLostPointerCapture={() => (dragging.current = false)}
       onKeyDown={(e) => {
         const keys = ["ArrowRight", "ArrowUp", "ArrowLeft", "ArrowDown", "Home", "End"];
         if (!keys.includes(e.key)) return;

@@ -17,3 +17,6 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# QC output
+scripts/out/

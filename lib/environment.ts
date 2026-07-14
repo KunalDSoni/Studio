@@ -37,6 +37,7 @@ const hex = (h: number): Rgb => [
 // Keyframes at t = 0, 0.25, 0.5, 0.75, 1. Golden Hour (index 3) is FIXED —
 // it must equal the scroll story's final lighting so the handoff is invisible.
 // (#ffd3a0 sun at the bearing of [7, 5.5, 15]: azimuth 25°, elevation 18.4°.)
+// Note: the daytime sun azimuths deliberately hug the 10–30° corridor (the only glazed face is south/+Z) — stages differentiate via elevation, intensity and color temperature, not a full east-west arc. Don't "fix" the arc back; the sun must stay in front of the glazing to reach the interior camera frame.
 const KEYS: EnvState[] = [
   { // Morning — low sun in the proven south-glazing corridor (long raking
     // shaft), COOL blue daylight in and cool hemisphere fill so the whole
