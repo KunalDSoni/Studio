@@ -250,6 +250,72 @@ button {
   transform: scaleY(0);
 }
 
+/* ---- time-of-day slider (appears when the story ends) ---- */
+.timeslider {
+  position: fixed;
+  bottom: max(28px, env(safe-area-inset-bottom, 0px) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(86vw, 420px);
+  padding: 14px 10px;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.timeslider__label {
+  display: block;
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.timeslider__track {
+  position: relative;
+  height: 2px;
+  background: var(--ink-faint);
+  border-radius: 1px;
+  /* generous one-thumb hit area */
+  padding: 22px 0;
+  background-clip: content-box;
+}
+
+.timeslider__dot {
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  transform: translate(-50%, -50%);
+}
+
+.timeslider__thumb {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f2b268;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 10px rgba(40, 30, 18, 0.35);
+  transform: translate(-50%, -50%);
+  transition: background 0.5s ease;
+}
+
+.timeslider:focus-visible .timeslider__thumb {
+  box-shadow: 0 0 0 3px rgba(178, 130, 60, 0.45);
+}
+
 /* ---- content that scrolls over the canvas at the end ---- */
 .content {
   position: relative;
