@@ -13,6 +13,7 @@ export interface EnvState {
   hemiIntensity: number;
   bg: Rgb;              // scene background + fog color
   practicals: number;   // 0..n master level for interior lights/emissives
+  garden: number;       // 0..n master level for landscape lighting
   sheerOpacity: number;
   bloom: number;
 }
@@ -45,34 +46,34 @@ const KEYS: EnvState[] = [
     sunAzimuth: 16, sunElevation: 10,
     sunColor: hex(0xc4d8f2), sunIntensity: 2.6,
     hemiSky: hex(0xc6daf6), hemiGround: hex(0x9fa9bb), hemiIntensity: 1.4,
-    bg: hex(0xd2ddee), practicals: 0, sheerOpacity: 0.28, bloom: 0.05,
+    bg: hex(0xd2ddee), practicals: 0, garden: 0, sheerOpacity: 0.28, bloom: 0.05,
   },
   { // Late Morning — sun climbing, whiter/brighter, neutral-cool fill,
     // shorter shaft than morning; a clear step brighter than morning.
     sunAzimuth: 20, sunElevation: 26,
     sunColor: hex(0xf2f4f4), sunIntensity: 3.1,
     hemiSky: hex(0xeaf0f2), hemiGround: hex(0xcbccc6), hemiIntensity: 1.55,
-    bg: hex(0xebecea), practicals: 0, sheerOpacity: 0.3, bloom: 0.06,
+    bg: hex(0xebecea), practicals: 0, garden: 0, sheerOpacity: 0.3, bloom: 0.06,
   },
   { // Afternoon — high warm-neutral sun, BRIGHTEST frame of the day (beats
     // golden), shortest/steepest shaft; warm but not as saturated as golden.
     sunAzimuth: 28, sunElevation: 40,
     sunColor: hex(0xfff3dc), sunIntensity: 3.6,
     hemiSky: hex(0xf8f3ea), hemiGround: hex(0xe0d8c6), hemiIntensity: 1.85,
-    bg: hex(0xf7f3ea), practicals: 0, sheerOpacity: 0.33, bloom: 0.09,
+    bg: hex(0xf7f3ea), practicals: 0, garden: 0, sheerOpacity: 0.33, bloom: 0.09,
   },
   { // Golden Hour — FIXED: equals the story-end state
     sunAzimuth: 25, sunElevation: 18.4,
     sunColor: hex(0xffd3a0), sunIntensity: 2.5,
     hemiSky: hex(0xfff6e6), hemiGround: hex(0xd8c9b2), hemiIntensity: 0.75,
-    bg: hex(0xf1ece1), practicals: 1, sheerOpacity: 0.36, bloom: 0.38,
+    bg: hex(0xf1ece1), practicals: 1, garden: 1, sheerOpacity: 0.36, bloom: 0.38,
   },
   { // Evening — blue hour: sun gone, cool indigo fill so unlit surfaces read
     // blue while the warm practicals make the interior glow against it.
     sunAzimuth: 12, sunElevation: 5,
     sunColor: hex(0x8290b8), sunIntensity: 0.25,
     hemiSky: hex(0x45579c), hemiGround: hex(0x2c3858), hemiIntensity: 1.05,
-    bg: hex(0x232d4a), practicals: 0.95, sheerOpacity: 0.5, bloom: 0.5,
+    bg: hex(0x232d4a), practicals: 0.95, garden: 1.25, sheerOpacity: 0.5, bloom: 0.5,
   },
 ];
 
@@ -81,7 +82,7 @@ export function createEnvState(): EnvState {
     sunAzimuth: 0, sunElevation: 0,
     sunColor: [0, 0, 0], sunIntensity: 0,
     hemiSky: [0, 0, 0], hemiGround: [0, 0, 0], hemiIntensity: 0,
-    bg: [0, 0, 0], practicals: 0, sheerOpacity: 0, bloom: 0,
+    bg: [0, 0, 0], practicals: 0, garden: 0, sheerOpacity: 0, bloom: 0,
   };
 }
 
@@ -109,6 +110,7 @@ export function envAt(t: number, out: EnvState): EnvState {
   out.hemiIntensity = lerp(a.hemiIntensity, b.hemiIntensity, k);
   lerp3(a.bg, b.bg, k, out.bg);
   out.practicals = lerp(a.practicals, b.practicals, k);
+  out.garden = lerp(a.garden, b.garden, k);
   out.sheerOpacity = lerp(a.sheerOpacity, b.sheerOpacity, k);
   out.bloom = lerp(a.bloom, b.bloom, k);
   return out;

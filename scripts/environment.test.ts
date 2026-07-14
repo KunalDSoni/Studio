@@ -54,3 +54,15 @@ test("envAt reuses the out object (no per-call allocation)", () => {
 test("stage names cover the five stops", () => {
   assert.equal(STAGE_NAMES.length, 5);
 });
+
+test("garden level: off by day, locked to 1 at golden hour, boosted at evening", () => {
+  close(envAt(0, createEnvState()).garden, 0);
+  close(envAt(0.5, createEnvState()).garden, 0);
+  close(envAt(0.75, createEnvState()).garden, 1); // handoff lock
+  close(envAt(1, createEnvState()).garden, 1.25);
+});
+
+test("garden interpolates between stops", () => {
+  const mid = envAt(0.875, createEnvState());
+  close(mid.garden, (1 + 1.25) / 2);
+});
