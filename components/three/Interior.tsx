@@ -63,6 +63,11 @@ export function Interior() {
     const soil = new THREE.MeshStandardMaterial({ color: "#3d3128", roughness: 1 });
     const foliageA = new THREE.MeshStandardMaterial({ color: "#8b8c6c", roughness: 1 });
     const foliageB = new THREE.MeshStandardMaterial({ color: "#767a5b", roughness: 1 });
+    const leafGreen = new THREE.MeshStandardMaterial({ color: "#3e6b3c", roughness: 1 });
+    const blossomMagenta = new THREE.MeshStandardMaterial({ color: "#c9407e", roughness: 0.85 });
+    const blossomPink = new THREE.MeshStandardMaterial({ color: "#e0699b", roughness: 0.85 });
+    const blossomCoral = new THREE.MeshStandardMaterial({ color: "#e08157", roughness: 0.85 });
+    const glazedPot = new THREE.MeshStandardMaterial({ color: "#4e6b60", roughness: 0.3 });
     const bark = new THREE.MeshStandardMaterial({ color: "#6e5d4a", roughness: 1 });
     const stone = new THREE.MeshStandardMaterial({ color: "#c6bda9", roughness: 0.95 });
     const shadeMat = new THREE.MeshStandardMaterial({
@@ -466,10 +471,10 @@ export function Interior() {
       add(g, 0.44, 4.68, 0.9);
     }
 
-    // ---- olive tree in the SW corner ----------------------------------------
+    // ---- blooming bougainvillea in the SW corner -----------------------------
     {
       const g = new THREE.Group();
-      const pot = lathe([[0.001, 0], [0.15, 0], [0.2, 0.1], [0.215, 0.32]], terracotta, 36);
+      const pot = lathe([[0.001, 0], [0.15, 0], [0.2, 0.1], [0.215, 0.32]], glazedPot, 36);
       pot.castShadow = true;
       pot.receiveShadow = true;
       g.add(pot);
@@ -479,16 +484,38 @@ export function Interior() {
       const t2 = M(new THREE.CylinderGeometry(0.016, 0.024, 0.55, 8), bark, 0.1, 1.22, 0.02);
       t2.rotation.z = 0.28;
       g.add(t1, t2);
-      const blobs: Array<[number, number, number, number, THREE.Material]> = [
-        [0.1, 1.62, 0, 0.34, foliageA],
-        [-0.18, 1.48, 0.1, 0.26, foliageB],
-        [0.32, 1.44, -0.08, 0.24, foliageB],
-        [0.05, 1.8, -0.12, 0.22, foliageA],
-        [-0.05, 1.38, -0.2, 0.2, foliageA],
+      const leaves: Array<[number, number, number, number]> = [
+        [0.1, 1.62, 0, 0.32],
+        [-0.18, 1.48, 0.1, 0.25],
+        [0.32, 1.44, -0.08, 0.23],
+        [0.05, 1.8, -0.12, 0.21],
+        [-0.05, 1.38, -0.2, 0.19],
       ];
-      for (const [bx, by, bz, r, mt] of blobs) {
-        const s = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), mt);
+      for (const [bx, by, bz, r] of leaves) {
+        const s = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), leafGreen);
         s.scale.y = 0.78;
+        s.position.set(bx, by, bz);
+        s.castShadow = true;
+        g.add(s);
+      }
+      // blossom clusters draped over the canopy
+      const blossoms: Array<[number, number, number, number, THREE.Material]> = [
+        [0.16, 1.84, 0.1, 0.14, blossomMagenta],
+        [-0.08, 1.92, -0.06, 0.12, blossomPink],
+        [0.3, 1.66, 0.14, 0.12, blossomPink],
+        [-0.3, 1.56, 0.16, 0.11, blossomMagenta],
+        [0.44, 1.5, -0.02, 0.11, blossomCoral],
+        [0.02, 1.68, 0.24, 0.12, blossomMagenta],
+        [-0.2, 1.7, -0.14, 0.1, blossomCoral],
+        [0.2, 1.46, 0.2, 0.1, blossomPink],
+        [-0.14, 1.32, 0.14, 0.09, blossomMagenta],
+        [0.4, 1.32, -0.16, 0.09, blossomPink],
+        [0.08, 1.98, 0.02, 0.1, blossomCoral],
+        [-0.02, 1.5, -0.28, 0.09, blossomPink],
+      ];
+      for (const [bx, by, bz, r, mt] of blossoms) {
+        const s = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), mt);
+        s.scale.y = 0.82;
         s.position.set(bx, by, bz);
         s.castShadow = true;
         g.add(s);
