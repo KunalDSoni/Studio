@@ -38,7 +38,7 @@ export function Building() {
     const params = (kind: MaterialKind): THREE.MeshStandardMaterialParameters => {
       switch (kind) {
         case "plaster":
-          return { color: "#f0e9da", map: plasterMap, roughness: 0.95 };
+          return { color: "#f5f2ec", map: plasterMap, roughness: 0.95 };
         case "concrete":
           return { color: "#cfc7b8", map: plasterMap, roughness: 0.97 };
         case "wood":

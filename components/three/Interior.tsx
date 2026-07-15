@@ -32,7 +32,7 @@ export function Interior() {
     cove?: THREE.MeshStandardMaterial;
     sheer?: THREE.MeshStandardMaterial;
     fan?: THREE.Group;
-    acVent?: THREE.Mesh;
+    acVent?: THREE.Object3D;
     chand?: THREE.MeshStandardMaterial;
   }>({});
 
@@ -158,19 +158,26 @@ export function Interior() {
         c.rotation.x = -0.14;
         g.add(c);
       }
-      // throw pillows: a tidy line along the back — rectangle, square, round
+      // throw pillows — eight distinct colours, no repeats, no white/grey
+      const cushion = (c: string) => new THREE.MeshStandardMaterial({ color: c, roughness: 1 });
       const lean = -0.16;
-      const pRect1 = M(RB(0.52, 0.36, 0.15, 0.08), linenRust, 1.05, 0.74, -0.24);
+      const pRect1 = M(RB(0.52, 0.36, 0.15, 0.08), cushion("#a35c3a"), 1.05, 0.74, -0.24); // rust
       pRect1.rotation.x = lean;
-      const pSq1 = M(RB(0.4, 0.4, 0.15, 0.08), linenMustard, 0.55, 0.76, -0.26);
+      const pSq1 = M(RB(0.4, 0.4, 0.15, 0.08), cushion("#c2913d"), 0.55, 0.76, -0.26); // ochre
       pSq1.rotation.x = lean;
-      const pRound = M(new THREE.CylinderGeometry(0.21, 0.21, 0.13, 28), linenTeal, 0, 0.77, -0.26);
+      const pRound = M(new THREE.CylinderGeometry(0.21, 0.21, 0.13, 28), cushion("#3f6f68"), 0, 0.77, -0.26); // teal
       pRound.rotation.x = Math.PI / 2 + lean;
-      const pSq2 = M(RB(0.4, 0.4, 0.15, 0.08), linenOlive, -0.55, 0.76, -0.26);
+      const pSq2 = M(RB(0.4, 0.4, 0.15, 0.08), cushion("#7a4048"), -0.55, 0.76, -0.26); // wine
       pSq2.rotation.x = lean;
-      const pRect2 = M(RB(0.52, 0.36, 0.15, 0.08), terracotta, -1.05, 0.74, -0.24);
+      const pRect2 = M(RB(0.52, 0.36, 0.15, 0.08), cushion("#7f8a5c"), -1.05, 0.74, -0.24); // sage
       pRect2.rotation.x = lean;
       g.add(pRect1, pSq1, pRound, pSq2, pRect2);
+      // a front layer of cushions overlapping the back row for a lived-in look
+      const pOv1 = M(RB(0.42, 0.42, 0.16, 0.09), cushion("#5a6a7c"), 0.8, 0.72, -0.05); // slate blue
+      pOv1.rotation.set(-0.3, 0.18, 0.13);
+      const pOv3 = M(RB(0.42, 0.42, 0.16, 0.09), cushion("#866172"), -0.82, 0.72, -0.05); // mauve
+      pOv3.rotation.set(-0.3, 0.22, 0.1);
+      g.add(pOv1, pOv3);
       add(g, 0.08, -1.4, -2.32);
     }
 
@@ -214,15 +221,36 @@ export function Interior() {
       add(g, 0.16, -0.85, -0.15);
     }
     {
+      // oversized architecture & design books — big, heavy, casually stacked
       const g = new THREE.Group();
-      const b1 = M(RB(0.34, 0.028, 0.26, 0.008), linenRust, 0, 0.375, 0);
-      const b2 = M(RB(0.3, 0.024, 0.23, 0.008), charcoal, 0.02, 0.402, 0.01);
-      b2.rotation.y = 0.35;
-      const bowl = lathe([[0.001, 0], [0.07, 0.005], [0.105, 0.04], [0.11, 0.075]], ceramic, 32);
-      bowl.position.set(0.28, 0.36, -0.14);
-      bowl.castShadow = true;
-      g.add(b1, b2, bowl);
-      add(g, 0.66, -1.05, -0.05);
+      const cover = (c: string) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85 });
+      const b1 = M(RB(0.48, 0.06, 0.37, 0.006, 2), cover("#3f4a4a"), 0, 0.39, 0);        // deep slate
+      const b2 = M(RB(0.45, 0.055, 0.35, 0.006, 2), cover("#a3714f"), 0.02, 0.4475, 0.015); // terracotta
+      b2.rotation.y = 0.13;
+      const b3 = M(RB(0.42, 0.05, 0.32, 0.006, 2), cover("#c9b692"), -0.015, 0.5, -0.01); // linen tan
+      b3.rotation.y = -0.1;
+      g.add(b1, b2, b3);
+      // slightly left of the table center, fully on the top
+      add(g, 0.66, -0.98, -0.15);
+    }
+    {
+      // AC + TV remotes resting on the table beside the books
+      const g = new THREE.Group();
+      const y = 0.368;
+      const mkRemote = (bodyC: string, padC: string, len: number) => {
+        const r = new THREE.Group();
+        r.add(M(RB(0.048, 0.016, len, 0.008, 2), new THREE.MeshStandardMaterial({ color: bodyC, roughness: 0.5 }), 0, 0, 0, false));
+        r.add(M(RB(0.03, 0.005, len - 0.05, 0.004, 2), new THREE.MeshStandardMaterial({ color: padC, roughness: 0.7 }), 0, 0.0105, 0, false));
+        return r;
+      };
+      const ac = mkRemote("#f2efe8", "#cfc8b8", 0.15);   // white AC remote
+      ac.position.set(0, y, 0);
+      ac.rotation.y = 0.35;
+      const tv = mkRemote("#1c1a18", "#3a3632", 0.17);   // black TV remote
+      tv.position.set(0.09, y, 0.02);
+      tv.rotation.y = -0.12;
+      g.add(ac, tv);
+      add(g, 0.67, -0.62, -0.08);
     }
 
     // ---- fluted feature wall + floating console + TV (west wall) -----------
@@ -288,11 +316,17 @@ export function Interior() {
     {
       const g = new THREE.Group();
       g.add(M(RB(0.24, 0.3, 0.9, 0.06), ceramic, 0, 2.52, 0));
-      // swinging vent flap along the lower front edge
-      const vent = M(RB(0.02, 0.06, 0.72, 0.008, 2), charcoal, -0.12, 2.41, 0, false);
-      vent.rotation.z = 0.5;
-      g.add(vent);
-      fx.current.acVent = vent;
+      // dark outlet slot recessed into the lower front
+      g.add(M(RB(0.07, 0.12, 0.8, 0.01), charcoal, -0.08, 2.41, 0, false));
+      // white deflector louver INSIDE the slot: its front edge sweeps up and down
+      // between the top and bottom black lines, always contained within the slot
+      const louverMat = new THREE.MeshStandardMaterial({ color: "#efe7d6", roughness: 0.7 });
+      const ventPivot = new THREE.Group();
+      ventPivot.position.set(-0.05, 2.41, 0);
+      const blade = M(RB(0.065, 0.014, 0.76, 0.005, 2), louverMat, -0.03, 0, 0, false);
+      ventPivot.add(blade);
+      g.add(ventPivot);
+      fx.current.acVent = ventPivot;
       // power LED — the unit is running
       const acLed = new THREE.MeshStandardMaterial({
         color: "#3a4a3f", emissive: "#54ff9a", emissiveIntensity: 2,
@@ -328,36 +362,108 @@ export function Interior() {
       add(g, 0.46, 4.89, 0.9, -Math.PI / 2);
     }
 
-    // ---- floating shelves + books (north wall) ------------------------------
+    // ---- designer library unit: dark frame, glass side cabinets, oak bay ----
     {
       const g = new THREE.Group();
-      const cols = ["#ded2b8", "#9d6a4a", "#3f3931", "#8f8a6d", "#c2a377", "#6e5d4a"];
-      for (let s = 0; s < 2; s++) {
-        const y = 1.32 + s * 0.46;
-        g.add(M(RB(1.15, 0.035, 0.2, 0.01), limedOak, 0, y, 0));
-        let x = -0.5;
-        while (x < 0.24) {
-          const bw = 0.022 + Math.random() * 0.016;
-          const bh = 0.16 + Math.random() * 0.075;
-          const book = M(
-            RB(bw, bh, 0.13 + Math.random() * 0.04, 0.004, 2),
-            new THREE.MeshStandardMaterial({ color: cols[(Math.random() * cols.length) | 0], roughness: 0.9 }),
-            x, y + 0.02 + bh / 2, 0
-          );
-          g.add(book);
-          x += bw + 0.008;
-          if (Math.random() < 0.18) x += 0.04 + Math.random() * 0.04;
-        }
-        // one horizontal stack
-        g.add(M(RB(0.16, 0.024, 0.12, 0.005, 2), ceramic, 0.38, y + 0.03, 0));
-        g.add(M(RB(0.14, 0.022, 0.11, 0.005, 2), linenRust, 0.39, y + 0.055, 0.01));
-        g.add(M(
-          RB(0.12, 0.02, 0.1, 0.005, 2),
-          new THREE.MeshStandardMaterial({ color: cols[1], roughness: 0.9 }),
-          0.375, y + 0.076, -0.005
-        ));
+      // spines skew blue/teal like the reference, with warm accents
+      const bookCols = [
+        "#3a5f7d", "#6d8ba0", "#2f4858", "#b5c4c9", "#c98a5a",
+        "#8a4a3a", "#d8cdb6", "#4f6f68", "#9d6a4a", "#3f3931",
+      ];
+      const caseDark = new THREE.MeshStandardMaterial({ color: "#262a30", roughness: 0.6, metalness: 0.1 });
+      const bayOak = new THREE.MeshStandardMaterial({ color: "#c19a68", roughness: 0.7 });
+      const glass = new THREE.MeshStandardMaterial({
+        color: "#aebab6", roughness: 0.06, metalness: 0.1,
+        transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false,
+      });
+
+      const Wt = 1.45, Ht = 1.85, Dp = 0.3;
+      const hw = Wt / 2;      // outer half-width
+      const cx = 0.36;        // center-bay half-width (bay spans -cx..cx)
+      const pt = 0.04;        // panel thickness
+      const backZ = -Dp / 2 + 0.01;
+      const frontZ = Dp / 2;
+
+      // outer case + two dividers
+      g.add(M(RB(pt, Ht, Dp, 0.008), caseDark, -hw + pt / 2, Ht / 2, 0));
+      g.add(M(RB(pt, Ht, Dp, 0.008), caseDark, hw - pt / 2, Ht / 2, 0));
+      g.add(M(RB(pt, Ht, Dp, 0.008), caseDark, -cx, Ht / 2, 0));
+      g.add(M(RB(pt, Ht, Dp, 0.008), caseDark, cx, Ht / 2, 0));
+      g.add(M(RB(Wt, pt, Dp, 0.008), caseDark, 0, Ht - pt / 2, 0));  // top
+      g.add(M(RB(Wt, 0.06, Dp, 0.008), caseDark, 0, 0.03, 0));       // base
+      // back panels: dark across, warm oak lining the center bay
+      g.add(M(new THREE.BoxGeometry(Wt, Ht - 0.1, 0.014), caseDark, 0, Ht / 2, backZ - 0.006, false));
+      g.add(M(new THREE.BoxGeometry(2 * cx - pt, Ht - 0.12, 0.016), bayOak, 0, Ht / 2, backZ + 0.006, false));
+
+      const shelfY = [0.06, 0.52, 0.98, 1.44];
+      for (let s = 1; s < shelfY.length; s++) {
+        g.add(M(RB(Wt - 2 * pt, 0.028, Dp - 0.02, 0.006), caseDark, 0, shelfY[s], 0));
+        g.add(M(RB(2 * cx - pt, 0.03, Dp - 0.02, 0.006), bayOak, 0, shelfY[s] + 0.001, 0.002));
       }
-      add(g, 0.5, 0.78, -3.3);
+
+      const fill = (x0: number, x1: number, y: number, maxH: number) => {
+        let x = x0;
+        while (x < x1) {
+          const bw = 0.02 + Math.random() * 0.016;
+          const bh = maxH - 0.06 + Math.random() * 0.06;
+          g.add(M(
+            RB(bw, bh, 0.15 + Math.random() * 0.04, 0.004, 2),
+            new THREE.MeshStandardMaterial({ color: bookCols[(Math.random() * bookCols.length) | 0], roughness: 0.9 }),
+            x + bw / 2, y + bh / 2, 0
+          ));
+          x += bw + 0.006;
+          if (Math.random() < 0.1) x += 0.025 + Math.random() * 0.03;
+        }
+      };
+      const stack = (x: number, y: number, w: number, n: number) => {
+        for (let i = 0; i < n; i++) {
+          g.add(M(
+            RB(w - i * 0.012, 0.026, 0.2 - i * 0.01, 0.005, 2),
+            new THREE.MeshStandardMaterial({ color: bookCols[(i * 3) % bookCols.length], roughness: 0.9 }),
+            x, y + 0.026 * i + 0.013, 0
+          ));
+        }
+      };
+
+      // side glass cabinets: books on every shelf
+      for (let s = 0; s < shelfY.length; s++) {
+        fill(-hw + pt + 0.03, -cx - 0.04, shelfY[s] + 0.03, 0.26 + (s % 2) * 0.04);
+        fill(cx + 0.04, hw - pt - 0.03, shelfY[s] + 0.03, 0.26 + (s % 2) * 0.04);
+      }
+      // glass doors + mullions + brass knobs on the side bays
+      const bayW = hw - cx - pt;
+      for (const side of [-1, 1]) {
+        const bcx = side * (hw + cx) / 2;
+        g.add(M(new THREE.PlaneGeometry(bayW, Ht - 0.12), glass, bcx, Ht / 2, frontZ, false));
+        g.add(M(RB(0.02, Ht - 0.14, 0.012, 0.004), caseDark, bcx, Ht / 2, frontZ - 0.006, false));
+        g.add(M(new THREE.SphereGeometry(0.016, 12, 8), brass, bcx - 0.05, 1.1, frontZ - 0.01, false));
+        g.add(M(new THREE.SphereGeometry(0.016, 12, 8), brass, bcx + 0.05, 1.1, frontZ - 0.01, false));
+      }
+
+      // center bay styling --------------------------------------------------
+      // top shelf: books flanking an open brass lantern
+      fill(-cx + 0.06, -0.12, shelfY[3] + 0.03, 0.3);
+      fill(0.16, cx - 0.06, shelfY[3] + 0.03, 0.3);
+      g.add(M(new THREE.CylinderGeometry(0.06, 0.07, 0.2, 6, 1, true), brass, 0, shelfY[3] + 0.13, 0.02));
+
+      // third shelf: books, with a dark box as the only accent
+      fill(-cx + 0.06, 0.06, shelfY[2] + 0.03, 0.3);
+      const box2 = M(RB(0.24, 0.085, 0.2, 0.01), charcoal, 0.18, shelfY[2] + 0.073, 0);
+      box2.rotation.y = -0.05;
+      g.add(box2);
+
+      // second shelf: books + a dark box
+      fill(-cx + 0.06, 0.02, shelfY[1] + 0.03, 0.3);
+      const box = M(RB(0.26, 0.09, 0.22, 0.01), charcoal, 0.2, shelfY[1] + 0.075, 0);
+      box.rotation.y = 0.06;
+      g.add(box);
+
+      // bottom shelf: stacked coffee-table books + books
+      stack(-cx + 0.24, shelfY[0] + 0.03, 0.36, 3);
+      fill(0.1, cx - 0.06, shelfY[0] + 0.03, 0.34);
+
+      // living-room nook: right of the sofa, just off the wall and partition
+      add(g, 0.5, 0.98, -3.3);
     }
 
     // ---- floor lamp (brass stem, linen drum) --------------------------------
@@ -375,43 +481,64 @@ export function Interior() {
       add(g, 0.56, -4.28, -2.72);
     }
 
-    // ---- dining: oval table, chairs, pendant cluster, sideboard -------------
+    // ---- dining: oval walnut table on fluted pedestals, six chairs ----------
     {
       const g = new THREE.Group();
-      const top = M(new THREE.CylinderGeometry(1, 1, 0.05, 56), walnutMat, 0, 0.73, 0);
-      top.scale.set(0.58, 1, 1.18);
-      const apron = M(new THREE.CylinderGeometry(0.86, 0.8, 0.05, 48), walnutMat, 0, 0.685, 0);
-      apron.scale.set(0.5, 1, 1.05);
+      const top = M(new THREE.CylinderGeometry(1, 1, 0.055, 64), walnutMat, 0, 0.735, 0);
+      top.scale.set(0.6, 1, 1.4);
+      const apron = M(new THREE.CylinderGeometry(0.92, 0.88, 0.06, 56), walnutMat, 0, 0.69, 0);
+      apron.scale.set(0.52, 1, 1.24);
       g.add(top, apron);
-      for (const dz of [-0.62, 0.62]) {
-        g.add(M(new THREE.CylinderGeometry(0.085, 0.1, 0.66, 28), bronze, 0, 0.33, dz));
-        g.add(M(new THREE.CylinderGeometry(0.2, 0.22, 0.02, 32), bronze, 0, 0.01, dz));
-      }
+      // two fluted (reeded) walnut drum pedestals
+      const mkPed = (dz: number) => {
+        g.add(M(new THREE.CylinderGeometry(0.2, 0.22, 0.64, 28), walnutMat, 0, 0.34, dz));
+        const n = 22;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          g.add(M(new THREE.CylinderGeometry(0.02, 0.02, 0.64, 6), walnutMat, Math.cos(a) * 0.215, 0.34, dz + Math.sin(a) * 0.215, false));
+        }
+        g.add(M(new THREE.CylinderGeometry(0.3, 0.32, 0.03, 32), walnutMat, 0, 0.015, dz));
+      };
+      mkPed(-0.72);
+      mkPed(0.72);
       add(g, 0.2, 3.55, -0.9);
     }
     {
-      // four upholstered chairs
+      // six upholstered barrel-back chairs on splayed wood legs
+      const seatFabric = new THREE.MeshStandardMaterial({ color: "#d8cdb6", roughness: 1 });
+      const chairWood = new THREE.MeshStandardMaterial({ color: "#5a4632", roughness: 0.6 });
       const mkChair = () => {
-        const g = new THREE.Group();
-        g.add(M(RB(0.44, 0.06, 0.43, 0.025), walnutMat, 0, 0.44, 0));
-        g.add(M(RB(0.42, 0.06, 0.4, 0.03), linenCream, 0, 0.5, 0));
+        const c = new THREE.Group();
+        // seat cushion
+        c.add(M(RB(0.46, 0.11, 0.44, 0.055), seatFabric, 0, 0.45, 0));
+        // upholstered back with a soft, curved (rounded) top — a flattened capsule
         const back = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.26, 0.26, 0.5, 28, 1, true, Math.PI * 0.68, Math.PI * 0.64),
-          new THREE.MeshStandardMaterial({ color: "#e7dcc4", roughness: 1, side: THREE.DoubleSide })
+          new THREE.CapsuleGeometry(0.21, 0.2, 6, 20),
+          new THREE.MeshStandardMaterial({ color: "#d8cdb6", roughness: 1 })
         );
-        back.position.set(0, 0.72, 0.06);
-        back.rotation.x = 0.08;
+        back.scale.set(1.0, 1, 0.34);
+        back.position.set(0, 0.72, 0.16);
+        back.rotation.x = -0.12;
         back.castShadow = true;
-        g.add(back);
-        for (const [lx, lz] of [[-0.18, -0.17], [0.18, -0.17], [-0.18, 0.17], [0.18, 0.17]]) {
-          g.add(M(new THREE.CylinderGeometry(0.013, 0.011, 0.44, 10), bronze, lx, 0.22, lz));
-        }
-        return g;
+        c.add(back);
+        // four tapered wood legs, splayed
+        const legGeo = new THREE.CylinderGeometry(0.02, 0.014, 0.48, 10);
+        const mkLeg = (lx: number, lz: number, ax: number, az: number) => {
+          const l = M(legGeo, chairWood, lx, 0.23, lz);
+          l.rotation.set(ax, 0, az);
+          return l;
+        };
+        c.add(mkLeg(-0.19, -0.17, 0.14, 0.09));
+        c.add(mkLeg(0.19, -0.17, 0.14, -0.09));
+        c.add(mkLeg(-0.19, 0.17, -0.12, 0.09));
+        c.add(mkLeg(0.19, 0.17, -0.12, -0.09));
+        return c;
       };
-      add(mkChair(), 0.26, 2.92, -0.42, Math.PI / 2);
-      add(mkChair(), 0.3, 2.92, -1.42, Math.PI / 2);
-      add(mkChair(), 0.34, 4.18, -0.42, -Math.PI / 2);
-      add(mkChair(), 0.38, 4.18, -1.42, -Math.PI / 2);
+      let ord = 0.26;
+      for (const z of [-1.72, -0.9, -0.08]) {
+        add(mkChair(), ord, 2.75, z, -Math.PI / 2); ord += 0.02;
+        add(mkChair(), ord, 4.35, z, Math.PI / 2); ord += 0.02;
+      }
     }
     {
       // ceiling fan over the dining table
@@ -509,9 +636,10 @@ export function Interior() {
     if (f.cove) f.cove.emissiveIntensity = 2.6 * L;
     if (f.chand) f.chand.emissiveIntensity = 1.9 * L;
     if (f.sheer) f.sheer.opacity = store.sheerLevel;
-    if (f.fan) f.fan.rotation.y += delta * 2.4;
+    if (f.fan) f.fan.rotation.y += delta * 6.5;
     // AC swing: flap sweeps slowly between nearly-closed and wide open
-    if (f.acVent) f.acVent.rotation.z = 0.5 + Math.sin(state.clock.elapsedTime * 0.9) * 0.32;
+    // deflector sweeps up and down within the slot, between the black lines
+    if (f.acVent) f.acVent.rotation.z = Math.sin(state.clock.elapsedTime * 1.2) * 0.7;
   });
 
   return <primitive object={groupRef.current} />;
