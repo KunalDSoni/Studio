@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   title: "Studio — spaces born from imagination",
   description:
     "An interior architecture studio. Every masterpiece begins with a blank canvas.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f1ece1",
 };
 
 export default function RootLayout({

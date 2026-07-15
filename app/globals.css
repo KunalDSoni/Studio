@@ -82,7 +82,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 26px clamp(24px, 4vw, 56px);
+  padding: calc(24px + env(safe-area-inset-top, 0px)) clamp(20px, 4vw, 56px) 24px;
 }
 
 .nav__logo {
@@ -148,6 +148,13 @@ button {
   }
 }
 
+/* very small screens: keep just the logo + CTA so the bar never crowds */
+@media (max-width: 460px) {
+  .nav__link {
+    display: none;
+  }
+}
+
 .nav__cta:hover {
   transform: scale(1.04);
   background: #2c1e14;
@@ -190,7 +197,7 @@ button {
 
 .hud__hint {
   position: absolute;
-  bottom: 34px;
+  bottom: max(34px, calc(env(safe-area-inset-bottom, 0px) + 20px));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -494,8 +501,8 @@ button {
 .footer {
   background: var(--ink);
   color: var(--paper);
-  padding: clamp(70px, 10vh, 120px) clamp(24px, 4vw, 56px) 36px;
-  min-height: 100vh;
+  padding: clamp(70px, 10vh, 120px) clamp(24px, 4vw, 56px)
+    calc(36px + env(safe-area-inset-bottom, 0px));
 }
 
 .footer__logo {
