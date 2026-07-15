@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { useFrame } from "@react-three/fiber";
 import { store, seg, easeInOut } from "@/lib/store";
-import { oakFloor, walnut, travertine, marble, boucle, artwork } from "@/lib/textures";
+import { oakFloor, walnut, travertine, boucle, artwork } from "@/lib/textures";
 
 // ---------------------------------------------------------------------------
 // The designed interior: every piece is composed from rounded, proportioned
@@ -29,9 +29,11 @@ export function Interior() {
   const items = useRef<Item[]>([]);
   const fx = useRef<{
     lampShade?: THREE.MeshStandardMaterial;
-    pendantGlass?: THREE.MeshStandardMaterial;
     cove?: THREE.MeshStandardMaterial;
     sheer?: THREE.MeshStandardMaterial;
+    fan?: THREE.Group;
+    acVent?: THREE.Mesh;
+    chand?: THREE.MeshStandardMaterial;
   }>({});
 
   const groupRef = useRef<THREE.Group | null>(null);
@@ -44,7 +46,6 @@ export function Interior() {
     const oakMat = new THREE.MeshStandardMaterial({ map: oakFloor(), roughness: 0.62 });
     const walnutMat = new THREE.MeshStandardMaterial({ map: walnut(), roughness: 0.5 });
     const travMat = new THREE.MeshStandardMaterial({ map: travertine(), roughness: 0.88 });
-    const marbleMat = new THREE.MeshStandardMaterial({ map: marble(), roughness: 0.22 });
     const boucleMat = new THREE.MeshStandardMaterial({ map: boucle(), roughness: 1 });
     const rugMat = new THREE.MeshStandardMaterial({
       map: boucle(), color: "#c8bda6", roughness: 1,
@@ -53,6 +54,8 @@ export function Interior() {
     const linenCream = new THREE.MeshStandardMaterial({ color: "#e7dcc4", roughness: 1 });
     const linenRust = new THREE.MeshStandardMaterial({ color: "#a06a48", roughness: 1 });
     const linenOlive = new THREE.MeshStandardMaterial({ color: "#8f8a6d", roughness: 1 });
+    const linenMustard = new THREE.MeshStandardMaterial({ color: "#c2913d", roughness: 1 });
+    const linenTeal = new THREE.MeshStandardMaterial({ color: "#4f6f68", roughness: 1 });
     const leather = new THREE.MeshStandardMaterial({ color: "#8d6742", roughness: 0.55 });
     const brass = new THREE.MeshStandardMaterial({ color: "#b3915c", metalness: 0.85, roughness: 0.35 });
     const bronze = new THREE.MeshStandardMaterial({ color: "#6b543a", metalness: 0.8, roughness: 0.45 });
@@ -65,10 +68,6 @@ export function Interior() {
       color: "#ead9b8", roughness: 1, side: THREE.DoubleSide,
       emissive: "#ffd9a4", emissiveIntensity: 0,
     });
-    const pendantGlass = new THREE.MeshStandardMaterial({
-      color: "#f2e6cf", roughness: 0.15,
-      emissive: "#ffd9a4", emissiveIntensity: 0,
-    });
     const coveMat = new THREE.MeshStandardMaterial({
       color: "#efe3c8", emissive: "#ffd9a4", emissiveIntensity: 0,
     });
@@ -76,7 +75,7 @@ export function Interior() {
       color: "#f6efe2", roughness: 1, transparent: true, opacity: 0,
       side: THREE.DoubleSide, depthWrite: false,
     });
-    fx.current = { lampShade: shadeMat, pendantGlass, cove: coveMat, sheer };
+    fx.current = { lampShade: shadeMat, cove: coveMat, sheer };
 
     // ---- helpers -----------------------------------------------------------
     const M = (
@@ -159,19 +158,47 @@ export function Interior() {
         c.rotation.x = -0.14;
         g.add(c);
       }
-      // throw pillows
-      const p1 = M(RB(0.46, 0.42, 0.16, 0.09), linenRust, 1.18, 0.78, -0.28);
-      p1.rotation.set(-0.18, 0.25, 0.06);
-      const p2 = M(RB(0.4, 0.38, 0.15, 0.09), linenCream, 0.82, 0.74, -0.3);
-      p2.rotation.set(-0.2, -0.15, -0.05);
-      const p3 = M(RB(0.44, 0.4, 0.16, 0.09), linenOlive, -1.08, 0.74, -0.15);
-      p3.rotation.set(-0.16, 0.5, 0);
-      g.add(p1, p2, p3);
-      // folded throw over the chaise corner
-      const throwB = M(RB(0.56, 0.05, 0.42, 0.02), linenCream, -1.35, 0.6, 1.1);
-      throwB.rotation.y = 0.18;
-      g.add(throwB);
+      // throw pillows: a tidy line along the back — rectangle, square, round
+      const lean = -0.16;
+      const pRect1 = M(RB(0.52, 0.36, 0.15, 0.08), linenRust, 1.05, 0.74, -0.24);
+      pRect1.rotation.x = lean;
+      const pSq1 = M(RB(0.4, 0.4, 0.15, 0.08), linenMustard, 0.55, 0.76, -0.26);
+      pSq1.rotation.x = lean;
+      const pRound = M(new THREE.CylinderGeometry(0.21, 0.21, 0.13, 28), linenTeal, 0, 0.77, -0.26);
+      pRound.rotation.x = Math.PI / 2 + lean;
+      const pSq2 = M(RB(0.4, 0.4, 0.15, 0.08), linenOlive, -0.55, 0.76, -0.26);
+      pSq2.rotation.x = lean;
+      const pRect2 = M(RB(0.52, 0.36, 0.15, 0.08), terracotta, -1.05, 0.74, -0.24);
+      pRect2.rotation.x = lean;
+      g.add(pRect1, pSq1, pRound, pSq2, pRect2);
       add(g, 0.08, -1.4, -2.32);
+    }
+
+    // ---- brass ring chandelier over the living room --------------------------
+    {
+      const g = new THREE.Group();
+      g.add(M(new THREE.CylinderGeometry(0.07, 0.09, 0.02, 24), brass, 0, 2.88, 0, false));
+      g.add(M(new THREE.CylinderGeometry(0.012, 0.012, 0.5, 10), charcoal, 0, 2.64, 0, false));
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.018, 12, 48), brass);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 2.38;
+      ring.castShadow = true;
+      g.add(ring);
+      const chandGlass = new THREE.MeshStandardMaterial({
+        color: "#f2e6cf", roughness: 0.15,
+        emissive: "#ffd9a4", emissiveIntensity: 0,
+      });
+      fx.current.chand = chandGlass;
+      // glass globes staggered around the ring
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const gx = Math.cos(a) * 0.36;
+        const gz = Math.sin(a) * 0.36;
+        const drop = 0.1 + (i % 2) * 0.09;
+        g.add(M(new THREE.CylinderGeometry(0.003, 0.003, drop, 6), charcoal, gx, 2.38 - drop / 2, gz, false));
+        g.add(M(new THREE.SphereGeometry(0.055, 20, 14), chandGlass, gx, 2.38 - drop - 0.045, gz, false));
+      }
+      add(g, 0.6, -0.85, -0.15);
     }
 
     // ---- travertine coffee table + styling ---------------------------------
@@ -196,51 +223,6 @@ export function Interior() {
       bowl.castShadow = true;
       g.add(b1, b2, bowl);
       add(g, 0.66, -1.05, -0.05);
-    }
-
-    // ---- sculptural swivel lounge chair + marble side table -----------------
-    {
-      const g = new THREE.Group();
-      g.add(M(new THREE.CylinderGeometry(0.3, 0.34, 0.025, 40), brass, 0, 0.012, 0));
-      g.add(M(new THREE.CylinderGeometry(0.032, 0.032, 0.34, 16), brass, 0, 0.18, 0));
-      // leather bowl shell
-      const bowl = new THREE.Mesh(
-        new THREE.SphereGeometry(0.46, 40, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
-        new THREE.MeshStandardMaterial({ color: "#8d6742", roughness: 0.55, side: THREE.DoubleSide })
-      );
-      bowl.scale.set(1, 0.72, 1);
-      bowl.position.y = 0.68;
-      bowl.castShadow = true;
-      g.add(bowl);
-      // wrapping back shell
-      const back = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.46, 0.46, 0.52, 40, 1, true, Math.PI * 0.6, Math.PI * 1.3),
-        new THREE.MeshStandardMaterial({ color: "#8d6742", roughness: 0.55, side: THREE.DoubleSide })
-      );
-      back.position.y = 0.92;
-      back.rotation.x = -0.06;
-      back.castShadow = true;
-      g.add(back);
-      // seat + back cushions
-      const seat = new THREE.Mesh(new THREE.SphereGeometry(0.38, 32, 16), boucleMat);
-      seat.scale.set(1, 0.32, 1);
-      seat.position.y = 0.72;
-      seat.castShadow = true;
-      const lumbar = new THREE.Mesh(new THREE.SphereGeometry(0.24, 28, 14), boucleMat);
-      lumbar.scale.set(1.25, 0.72, 0.5);
-      lumbar.position.set(0, 0.95, -0.26);
-      g.add(seat, lumbar);
-      add(g, 0.22, -3.55, 1.35, 2.4);
-    }
-    {
-      const g = new THREE.Group();
-      const t = M(new THREE.CylinderGeometry(0.24, 0.26, 0.46, 40), marbleMat, 0, 0.23, 0);
-      g.add(t);
-      const vase = lathe([[0.001, 0], [0.045, 0], [0.06, 0.08], [0.04, 0.16], [0.045, 0.2]], terracotta, 28);
-      vase.position.y = 0.46;
-      vase.castShadow = true;
-      g.add(vase);
-      add(g, 0.28, -4.32, 0.55);
     }
 
     // ---- fluted feature wall + floating console + TV (west wall) -----------
@@ -273,13 +255,10 @@ export function Interior() {
         inst.setMatrixAt(i, m4);
       }
       g.add(inst);
-      // styling: stack of books + ceramic
+      // styling: stack of books
       const bk = M(RB(0.26, 0.05, 0.2, 0.008), linenOlive, 0.02, 0.82, 0.55);
       bk.rotation.y = 0.2;
-      const sph = lathe([[0.001, 0], [0.05, 0.004], [0.085, 0.05], [0.07, 0.12], [0.03, 0.15]], ceramic, 28);
-      sph.position.set(0, 0.81, -0.5);
-      sph.castShadow = true;
-      g.add(bk, sph);
+      g.add(bk);
       add(g, 0.3, -4.66, 0.1);
     }
     {
@@ -303,6 +282,23 @@ export function Interior() {
       inst.receiveShadow = true;
       g.add(inst);
       add(g, 0.12, 1.79, 0);
+    }
+
+    // ---- split AC high on the partition, front facing the TV wall -----------
+    {
+      const g = new THREE.Group();
+      g.add(M(RB(0.24, 0.3, 0.9, 0.06), ceramic, 0, 2.52, 0));
+      // swinging vent flap along the lower front edge
+      const vent = M(RB(0.02, 0.06, 0.72, 0.008, 2), charcoal, -0.12, 2.41, 0, false);
+      vent.rotation.z = 0.5;
+      g.add(vent);
+      fx.current.acVent = vent;
+      // power LED — the unit is running
+      const acLed = new THREE.MeshStandardMaterial({
+        color: "#3a4a3f", emissive: "#54ff9a", emissiveIntensity: 2,
+      });
+      g.add(M(RB(0.012, 0.03, 0.03, 0.005, 2), acLed, -0.122, 2.58, 0.38, false));
+      add(g, 0.42, 1.645, -1.9);
     }
 
     // ---- artwork ------------------------------------------------------------
@@ -391,11 +387,6 @@ export function Interior() {
         g.add(M(new THREE.CylinderGeometry(0.085, 0.1, 0.66, 28), bronze, 0, 0.33, dz));
         g.add(M(new THREE.CylinderGeometry(0.2, 0.22, 0.02, 32), bronze, 0, 0.01, dz));
       }
-      // centerpiece
-      const vs = lathe([[0.001, 0], [0.06, 0], [0.1, 0.07], [0.09, 0.16], [0.045, 0.2], [0.05, 0.26]], ceramic, 32);
-      vs.position.y = 0.755;
-      vs.castShadow = true;
-      g.add(vs);
       add(g, 0.2, 3.55, -0.9);
     }
     {
@@ -423,19 +414,23 @@ export function Interior() {
       add(mkChair(), 0.38, 4.18, -1.42, -Math.PI / 2);
     }
     {
-      // blown-glass pendant cluster
+      // ceiling fan over the dining table
       const g = new THREE.Group();
       g.add(M(new THREE.CylinderGeometry(0.07, 0.09, 0.02, 24), brass, 0, 2.85, 0, false));
-      const drops: Array<[number, number, number, number]> = [
-        [0, 1.92, -0.12, 0.095],
-        [0.15, 2.08, 0.07, 0.07],
-        [-0.15, 2.0, 0.1, 0.082],
-      ];
-      for (const [dx, dy, dz, r] of drops) {
-        const cord = M(new THREE.CylinderGeometry(0.0035, 0.0035, 2.86 - dy, 6), charcoal, dx, dy + (2.86 - dy) / 2, dz, false);
-        const globe = M(new THREE.SphereGeometry(r, 28, 20), pendantGlass, dx, dy, dz, false);
-        g.add(cord, globe);
+      g.add(M(new THREE.CylinderGeometry(0.014, 0.014, 0.28, 10), charcoal, 0, 2.72, 0, false));
+      g.add(M(new THREE.CylinderGeometry(0.1, 0.12, 0.1, 24), brass, 0, 2.54, 0));
+      const blades = new THREE.Group();
+      blades.position.y = 2.57;
+      for (let i = 0; i < 4; i++) {
+        const arm = new THREE.Group();
+        arm.rotation.y = (i * Math.PI) / 2;
+        const blade = M(RB(0.6, 0.014, 0.13, 0.007), walnutMat, 0.42, 0, 0);
+        blade.rotation.x = 0.14;
+        arm.add(blade);
+        blades.add(arm);
       }
+      g.add(blades);
+      fx.current.fan = blades;
       add(g, 0.62, 3.55, -0.9);
     }
     {
@@ -450,13 +445,10 @@ export function Interior() {
         inst.setMatrixAt(i, m4);
       }
       g.add(inst);
-      const v1 = lathe([[0.001, 0], [0.055, 0], [0.1, 0.06], [0.11, 0.15], [0.07, 0.23], [0.04, 0.27], [0.045, 0.31]], terracotta, 32);
-      v1.position.set(0, 0.81, -0.45);
-      v1.castShadow = true;
       const v2 = lathe([[0.001, 0], [0.05, 0], [0.068, 0.1], [0.06, 0.22], [0.032, 0.3], [0.028, 0.38]], ceramic, 32);
       v2.position.set(0.02, 0.81, -0.18);
       v2.castShadow = true;
-      g.add(v1, v2);
+      g.add(v2);
       // dry branches in the tall vase
       for (let b = 0; b < 3; b++) {
         const br = M(new THREE.CylinderGeometry(0.003, 0.005, 0.5, 5), bark, 0.02 + (b - 1) * 0.015, 1.4, -0.18, false);
@@ -501,7 +493,7 @@ export function Interior() {
     groupRef.current = root;
   }
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     const p = store.progress;
     const furnP = easeInOut(seg(p, 0.55, 0.72));
 
@@ -514,9 +506,12 @@ export function Interior() {
     const f = fx.current;
     const L = store.lightLevel;
     if (f.lampShade) f.lampShade.emissiveIntensity = 1.5 * L;
-    if (f.pendantGlass) f.pendantGlass.emissiveIntensity = 1.9 * L;
     if (f.cove) f.cove.emissiveIntensity = 2.6 * L;
+    if (f.chand) f.chand.emissiveIntensity = 1.9 * L;
     if (f.sheer) f.sheer.opacity = store.sheerLevel;
+    if (f.fan) f.fan.rotation.y += delta * 2.4;
+    // AC swing: flap sweeps slowly between nearly-closed and wide open
+    if (f.acVent) f.acVent.rotation.z = 0.5 + Math.sin(state.clock.elapsedTime * 0.9) * 0.32;
   });
 
   return <primitive object={groupRef.current} />;

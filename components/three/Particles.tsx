@@ -89,10 +89,8 @@ void main() {
   // the canvas starts truly blank — particles only exist once scrolling begins
   float appear = smoothstep(0.004, 0.05, uProgress + stag * 0.012);
 
-  // dissolve as real materials arrive; a whisper of dust lingers
-  float dust = step(0.93, aRand.y);
+  // dissolve fully as real materials arrive
   float fade = 1.0 - smoothstep(0.50, 0.62, uProgress);
-  fade = max(fade, dust * (1.0 - smoothstep(0.68, 0.78, uProgress)));
   vAlpha = appear * fade * (0.3 + 0.7 * aRand.w);
   vTone = aRand.x;
 }

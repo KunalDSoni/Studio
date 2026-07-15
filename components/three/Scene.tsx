@@ -208,7 +208,7 @@ export function Scene() {
       />
       <pointLight
         ref={ceiling}
-        position={[-1.2, 2.35, -0.4]}
+        position={[-0.85, 2.1, -0.15]}
         color="#ffe3ba"
         intensity={0}
         distance={12}
