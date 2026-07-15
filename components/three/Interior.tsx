@@ -48,7 +48,7 @@ export function Interior() {
     const travMat = new THREE.MeshStandardMaterial({ map: travertine(), roughness: 0.88 });
     const boucleMat = new THREE.MeshStandardMaterial({ map: boucle(), roughness: 1 });
     const rugMat = new THREE.MeshStandardMaterial({
-      map: boucle(), color: "#c8bda6", roughness: 1,
+      map: boucle(), color: "#8a7d63", roughness: 1,
     });
     const limedOak = new THREE.MeshStandardMaterial({ color: "#c9b692", roughness: 0.8 });
     const linenCream = new THREE.MeshStandardMaterial({ color: "#e7dcc4", roughness: 1 });
@@ -501,6 +501,33 @@ export function Interior() {
       mkPed(-0.72);
       mkPed(0.72);
       add(g, 0.2, 3.55, -0.9);
+    }
+    {
+      // fruit basket centrepiece on the dining table
+      const g = new THREE.Group();
+      const wicker = new THREE.MeshStandardMaterial({ color: "#b9915c", roughness: 0.9 });
+      const y0 = 0.7625; // table-top surface
+      g.add(M(new THREE.CylinderGeometry(0.23, 0.17, 0.12, 22), wicker, 0, y0 + 0.06, 0));
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.225, 0.014, 8, 24), wicker);
+      rim.rotation.x = Math.PI / 2;
+      rim.position.set(0, y0 + 0.12, 0);
+      g.add(rim);
+      const fruitCols = ["#b83c2e", "#e08a3c", "#7fa03c", "#d9be3f", "#8a4a6a", "#c94f38"];
+      const fruit = (fx: number, fz: number, fy: number, r: number, c: string) => {
+        const s = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 12), new THREE.MeshStandardMaterial({ color: c, roughness: 0.55 }));
+        s.position.set(fx, y0 + 0.1 + fy, fz);
+        s.castShadow = true;
+        g.add(s);
+      };
+      const ring: Array<[number, number, number, number]> = [
+        [0.09, 0, 0, 0.058], [-0.05, 0.08, 0, 0.055], [-0.08, -0.06, 0, 0.056],
+        [0.02, -0.09, 0, 0.054], [0.07, 0.07, 0, 0.05], [0, 0.02, 0, 0.058],
+      ];
+      ring.forEach(([fx, fz, fy, r], i) => fruit(fx, fz, fy, r, fruitCols[i % fruitCols.length]));
+      // a couple mounded on top
+      fruit(-0.02, 0.0, 0.09, 0.05, fruitCols[3]);
+      fruit(0.05, -0.03, 0.08, 0.048, fruitCols[2]);
+      add(g, 0.24, 3.55, -0.9);
     }
     {
       // six upholstered barrel-back chairs on splayed wood legs

@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/Navbar";
 import { Hud } from "@/components/Hud";
-import { TimeSlider } from "@/components/TimeSlider";
 import { Works } from "@/components/Works";
 import { useScrollRig } from "@/components/useScrollRig";
 
@@ -22,7 +21,6 @@ export default function Home() {
 
       <Navbar />
       <Hud />
-      <TimeSlider />
 
       <main className="content">
         {/* scroll runway for the cinematic sequence */}

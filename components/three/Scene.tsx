@@ -166,7 +166,7 @@ export function Scene() {
         .lerpColors(blend.storyHemiGround, blend.hemiGround, w);
       hemi.current.groundColor.copy(blend.hemiGround);
     }
-    if (lamp.current) lamp.current.intensity = 3.4 * store.lightLevel;
+    if (lamp.current) lamp.current.intensity = 0.4 * store.lightLevel;
     if (ceiling.current) ceiling.current.intensity = 4.2 * store.lightLevel;
     if (pendant.current) pendant.current.intensity = 1.6 * store.lightLevel;
 
@@ -203,8 +203,8 @@ export function Scene() {
         position={[-4.22, 1.5, -2.68]}
         color="#ffcf96"
         intensity={0}
-        distance={8}
-        decay={1.8}
+        distance={3}
+        decay={2.8}
       />
       <pointLight
         ref={ceiling}
