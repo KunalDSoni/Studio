@@ -102,12 +102,7 @@ export function Works() {
       </section>
 
       <footer className="footer">
-        <div className="footer__logo">Studio</div>
-        <div className="footer__row">
-          <span>Interior architecture studio</span>
-          <span>Est. 2023</span>
-          <span>© {new Date().getFullYear()} Studio</span>
-        </div>
+        <div className="footer__logo">Access Point</div>
       </footer>
     </>
   );

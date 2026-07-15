@@ -10,7 +10,7 @@ export function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 1.1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <span className="nav__logo">Studio</span>
+      <span className="nav__logo">Access Point</span>
       <div className="nav__right">
         <button className="nav__link" type="button">
           About

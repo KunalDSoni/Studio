@@ -83,7 +83,7 @@ export function TimeSlider() {
         if (e.key === "End") store.timeTarget = 1;
       }}
     >
-      <span className="timeslider__label" ref={labelRef}>
+      <span className="timeslider__label" ref={labelRef} style={{ display: "none" }}>
         Golden Hour
       </span>
       <div className="timeslider__track" ref={trackRef}>

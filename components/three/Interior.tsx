@@ -63,7 +63,6 @@ export function Interior() {
     const terracotta = new THREE.MeshStandardMaterial({ color: "#a3714f", roughness: 0.95 });
     const charcoal = new THREE.MeshStandardMaterial({ color: "#35302a", roughness: 0.9 });
     const smoked = new THREE.MeshStandardMaterial({ color: "#151210", metalness: 0.4, roughness: 0.14 });
-    const bark = new THREE.MeshStandardMaterial({ color: "#6e5d4a", roughness: 1 });
     const shadeMat = new THREE.MeshStandardMaterial({
       color: "#ead9b8", roughness: 1, side: THREE.DoubleSide,
       emissive: "#ffd9a4", emissiveIntensity: 0,
@@ -559,31 +558,6 @@ export function Interior() {
       g.add(blades);
       fx.current.fan = blades;
       add(g, 0.62, 3.55, -0.9);
-    }
-    {
-      // floating fluted sideboard on the east wall
-      const g = new THREE.Group();
-      g.add(M(RB(0.4, 0.42, 1.7, 0.05), walnutMat, 0, 0.6, 0));
-      const flute = new THREE.CylinderGeometry(0.015, 0.015, 0.38, 8);
-      const inst = new THREE.InstancedMesh(flute, walnutMat, 23);
-      const m4 = new THREE.Matrix4();
-      for (let i = 0; i < 23; i++) {
-        m4.setPosition(-0.2, 0.6, -0.8 + i * 0.072);
-        inst.setMatrixAt(i, m4);
-      }
-      g.add(inst);
-      const v2 = lathe([[0.001, 0], [0.05, 0], [0.068, 0.1], [0.06, 0.22], [0.032, 0.3], [0.028, 0.38]], ceramic, 32);
-      v2.position.set(0.02, 0.81, -0.18);
-      v2.castShadow = true;
-      g.add(v2);
-      // dry branches in the tall vase
-      for (let b = 0; b < 3; b++) {
-        const br = M(new THREE.CylinderGeometry(0.003, 0.005, 0.5, 5), bark, 0.02 + (b - 1) * 0.015, 1.4, -0.18, false);
-        br.rotation.z = (b - 1) * 0.22;
-        br.rotation.x = (b - 1) * 0.12;
-        g.add(br);
-      }
-      add(g, 0.44, 4.68, 0.9);
     }
 
     // ---- ceiling cove strips -------------------------------------------------
