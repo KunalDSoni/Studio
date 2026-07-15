@@ -495,11 +495,12 @@ button {
   background: var(--ink);
   color: var(--paper);
   padding: clamp(70px, 10vh, 120px) clamp(24px, 4vw, 56px) 36px;
+  min-height: 100vh;
 }
 
 .footer__logo {
   font-weight: 800;
-  font-size: clamp(90px, 18vw, 280px);
+  font-size: clamp(45px, 9vw, 140px);
   letter-spacing: -0.05em;
   line-height: 0.85;
   opacity: 0.97;

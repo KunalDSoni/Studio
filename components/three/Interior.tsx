@@ -543,8 +543,8 @@ export function Interior() {
           new THREE.MeshStandardMaterial({ color: "#d8cdb6", roughness: 1 })
         );
         back.scale.set(1.0, 1, 0.34);
-        back.position.set(0, 0.72, 0.16);
-        back.rotation.x = -0.12;
+        back.position.set(0, 0.72, 0.18);
+        back.rotation.x = 0;
         back.castShadow = true;
         c.add(back);
         // four tapered wood legs, splayed
