@@ -60,12 +60,6 @@ export function Interior() {
     const terracotta = new THREE.MeshStandardMaterial({ color: "#a3714f", roughness: 0.95 });
     const charcoal = new THREE.MeshStandardMaterial({ color: "#35302a", roughness: 0.9 });
     const smoked = new THREE.MeshStandardMaterial({ color: "#151210", metalness: 0.4, roughness: 0.14 });
-    const soil = new THREE.MeshStandardMaterial({ color: "#3d3128", roughness: 1 });
-    const leafGreen = new THREE.MeshStandardMaterial({ color: "#3e6b3c", roughness: 1 });
-    const blossomMagenta = new THREE.MeshStandardMaterial({ color: "#c9407e", roughness: 0.85 });
-    const blossomPink = new THREE.MeshStandardMaterial({ color: "#e0699b", roughness: 0.85 });
-    const blossomCoral = new THREE.MeshStandardMaterial({ color: "#e08157", roughness: 0.85 });
-    const glazedPot = new THREE.MeshStandardMaterial({ color: "#4e6b60", roughness: 0.3 });
     const bark = new THREE.MeshStandardMaterial({ color: "#6e5d4a", roughness: 1 });
     const shadeMat = new THREE.MeshStandardMaterial({
       color: "#ead9b8", roughness: 1, side: THREE.DoubleSide,
@@ -346,8 +340,7 @@ export function Interior() {
         const y = 1.32 + s * 0.46;
         g.add(M(RB(1.15, 0.035, 0.2, 0.01), limedOak, 0, y, 0));
         let x = -0.5;
-        const n = 6 + ((Math.random() * 3) | 0);
-        for (let b = 0; b < n; b++) {
+        while (x < 0.24) {
           const bw = 0.022 + Math.random() * 0.016;
           const bh = 0.16 + Math.random() * 0.075;
           const book = M(
@@ -357,10 +350,16 @@ export function Interior() {
           );
           g.add(book);
           x += bw + 0.008;
+          if (Math.random() < 0.18) x += 0.04 + Math.random() * 0.04;
         }
         // one horizontal stack
         g.add(M(RB(0.16, 0.024, 0.12, 0.005, 2), ceramic, 0.38, y + 0.03, 0));
         g.add(M(RB(0.14, 0.022, 0.11, 0.005, 2), linenRust, 0.39, y + 0.055, 0.01));
+        g.add(M(
+          RB(0.12, 0.02, 0.1, 0.005, 2),
+          new THREE.MeshStandardMaterial({ color: cols[1], roughness: 0.9 }),
+          0.375, y + 0.076, -0.005
+        ));
       }
       add(g, 0.5, 0.78, -3.3);
     }
@@ -418,10 +417,10 @@ export function Interior() {
         }
         return g;
       };
-      add(mkChair(), 0.26, 2.92, -0.42, -Math.PI / 2);
-      add(mkChair(), 0.3, 2.92, -1.42, -Math.PI / 2);
-      add(mkChair(), 0.34, 4.18, -0.42, Math.PI / 2);
-      add(mkChair(), 0.38, 4.18, -1.42, Math.PI / 2);
+      add(mkChair(), 0.26, 2.92, -0.42, Math.PI / 2);
+      add(mkChair(), 0.3, 2.92, -1.42, Math.PI / 2);
+      add(mkChair(), 0.34, 4.18, -0.42, -Math.PI / 2);
+      add(mkChair(), 0.38, 4.18, -1.42, -Math.PI / 2);
     }
     {
       // blown-glass pendant cluster
@@ -466,58 +465,6 @@ export function Interior() {
         g.add(br);
       }
       add(g, 0.44, 4.68, 0.9);
-    }
-
-    // ---- blooming bougainvillea in the SW corner -----------------------------
-    {
-      const g = new THREE.Group();
-      const pot = lathe([[0.001, 0], [0.15, 0], [0.2, 0.1], [0.215, 0.32]], glazedPot, 36);
-      pot.castShadow = true;
-      pot.receiveShadow = true;
-      g.add(pot);
-      g.add(M(new THREE.CylinderGeometry(0.19, 0.19, 0.015, 24), soil, 0, 0.315, 0, false));
-      const t1 = M(new THREE.CylinderGeometry(0.026, 0.038, 0.75, 10), bark, 0, 0.68, 0);
-      t1.rotation.z = 0.08;
-      const t2 = M(new THREE.CylinderGeometry(0.016, 0.024, 0.55, 8), bark, 0.1, 1.22, 0.02);
-      t2.rotation.z = 0.28;
-      g.add(t1, t2);
-      const leaves: Array<[number, number, number, number]> = [
-        [0.1, 1.62, 0, 0.32],
-        [-0.18, 1.48, 0.1, 0.25],
-        [0.32, 1.44, -0.08, 0.23],
-        [0.05, 1.8, -0.12, 0.21],
-        [-0.05, 1.38, -0.2, 0.19],
-      ];
-      for (const [bx, by, bz, r] of leaves) {
-        const s = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), leafGreen);
-        s.scale.y = 0.78;
-        s.position.set(bx, by, bz);
-        s.castShadow = true;
-        g.add(s);
-      }
-      // blossom clusters draped over the canopy
-      const blossoms: Array<[number, number, number, number, THREE.Material]> = [
-        [0.16, 1.84, 0.1, 0.14, blossomMagenta],
-        [-0.08, 1.92, -0.06, 0.12, blossomPink],
-        [0.3, 1.66, 0.14, 0.12, blossomPink],
-        [-0.3, 1.56, 0.16, 0.11, blossomMagenta],
-        [0.44, 1.5, -0.02, 0.11, blossomCoral],
-        [0.02, 1.68, 0.24, 0.12, blossomMagenta],
-        [-0.2, 1.7, -0.14, 0.1, blossomCoral],
-        [0.2, 1.46, 0.2, 0.1, blossomPink],
-        [-0.14, 1.32, 0.14, 0.09, blossomMagenta],
-        [0.4, 1.32, -0.16, 0.09, blossomPink],
-        [0.08, 1.98, 0.02, 0.1, blossomCoral],
-        [-0.02, 1.5, -0.28, 0.09, blossomPink],
-      ];
-      for (const [bx, by, bz, r, mt] of blossoms) {
-        const s = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), mt);
-        s.scale.y = 0.82;
-        s.position.set(bx, by, bz);
-        s.castShadow = true;
-        g.add(s);
-      }
-      add(g, 0.72, -4.25, 2.5);
     }
 
     // ---- ceiling cove strips -------------------------------------------------
